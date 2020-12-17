@@ -15,15 +15,19 @@
 # et qu'on ne puisse pas créer des lions ac des algues.
 
 class Jungle
-  def initialize(nb_animals, nb_plants)
+  def initialize(nb_animals, nb_plants, factory)
     @animals = []
     nb_animals.times do |i|
-      @animals << new_organism(:animal ,"Animal #{i + 1}")
+      @animals << factory.new_animal("Animal #{i + 1}")
     end
     @plants = []
     nb_plants.times do |i|
-      @plants << new_organism(:plant ,"Plant #{i + 1}")
+      @plants << factory.new_plant("Plant #{i + 1}")
     end
+  end
+
+  def to_s
+    "dans la jungle il y a #{@animals.count} #{@animals.first.class} et #{@plants.count} #{@plants.first.class}."
   end
 
   def one_day
@@ -35,23 +39,23 @@ class Jungle
       plant.grow
     end
   end
+end
 
-  def new_organism
-    # crée les instances d'animaux et de plantes que l'utilisateur souhaite créer.
+class Ground
+  def new_animal(name)
+    Lion.new(name)
+  end
+  def new_plant(name)
+    Tree.new(name)
   end
 end
 
-class LionsTreesJungle < Jungle
-  def new_organism(type, name)
-    return Lion.new(name) if type == :animal
-    return Tree.new(name) if type == :plant
+class River
+  def new_animal(name)
+    Crocodile.new(name)
   end
-end
-
-class CrocodilesAlgaesJungle < Jungle
-  def new_organism(type, name)
-    return Crocodile.new(name) if type == :animal
-    return Algae.new(name) if type == :plant
+  def new_plant(name)
+    Algae.new(name)
   end
 end
 
@@ -102,8 +106,8 @@ class Crocodile
   end
 end
 
-jungle = CrocodilesAlgaesJungle.new(3, 5)
-p jungle
+jungle = Jungle.new(3, 5, Ground.new)
+p jungle.to_s
 
 
 # L'objectif est que notre modèle Jungle puisse créer des jungles ac tous types
